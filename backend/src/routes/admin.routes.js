@@ -5,7 +5,13 @@ const { format } = require('date-fns');
 
 // 1. Đăng nhập
 router.post('/admin/login', (req, res) => {
-    if (req.body.password === process.env.ADMIN_PASSWORD) {
+    const inputPassword = req.body.password;
+    // 👇 GHI CỨNG LUÔN ĐỂ TEST (Bỏ qua biến môi trường tạm thời)
+    const adminPassword = 'admin123'; 
+
+    console.log(`Login Check: Nhập="${inputPassword}" vs Đúng="${adminPassword}"`);
+
+    if (inputPassword === adminPassword) {
         res.json({ success: true });
     } else {
         res.status(401).json({ success: false, message: 'Sai mật khẩu' });

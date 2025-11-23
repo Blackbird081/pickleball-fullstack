@@ -13,7 +13,12 @@ const reportRoutes = require('./routes/report.routes');
 const app = express();
 const PORT = 3000;
 
-app.use(cors());
+// Cho phép tất cả các nơi gọi vào (Dễ nhất để fix lỗi CORS)
+app.use(cors({
+    origin: '*', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 

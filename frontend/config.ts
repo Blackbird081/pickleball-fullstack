@@ -4,7 +4,7 @@
 // export const API_BASE_URL = 'http://localhost:3000'; 
 
 // (Comment dòng Cloudflare lại để dành khi nào cần thì mở ra)
-export const API_BASE_URL = 'https://honolulu-singing-signatures-premier.trycloudflare.com';
+export const API_BASE_URL = 'https://pickleball-6lvb.onrender.com';
 
 export const getApiUrl = (endpoint: string) => {
   const cleanBaseUrl = API_BASE_URL.replace(/\/+$/, '');

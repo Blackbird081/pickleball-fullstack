@@ -109,4 +109,21 @@ router.post('/checkin', async (req, res) => {
     } catch (error) { res.status(500).json({ success: false, message: 'Lỗi' }); }
 });
 
+// 6. Cập nhật thời gian kết thúc (Tăng/Giảm giờ)
+router.post('/bookings/update-time', async (req, res) => {
+    const { bookingId, minutes } = req.body;
+    try {
+        const booking = await prisma.booking.findUnique({ where: { id: bookingId } });
+        const newEndTime = new Date(new Date(booking.endTime).getTime() + minutes * 60000);
+        
+        await prisma.booking.update({
+            where: { id: bookingId },
+            data: { endTime: newEndTime }
+        });
+        res.json({ success: true, newEndTime });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Lỗi cập nhật giờ' });
+    }
+});
+
 module.exports = router;

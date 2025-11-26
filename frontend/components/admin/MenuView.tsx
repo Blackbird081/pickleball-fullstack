@@ -6,16 +6,17 @@ export default function MenuView() {
   const [menu, setMenu] = useState<any[]>([]);
   const [newItem, setNewItem] = useState({ name: '', price: '', type: 'drink', imageUrl: '' });
   const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false); // Trạng thái đang upload ảnh
+  const [uploading, setUploading] = useState(false);
 
   const fetchMenu = async () => {
-    const res = await axios.get(getApiUrl('/menu'));
-    setMenu(res.data);
+    try {
+      const res = await axios.get(getApiUrl('/menu'));
+      setMenu(res.data);
+    } catch (error) { console.error(error); }
   };
 
   useEffect(() => { fetchMenu(); }, []);
 
-  // Xử lý chọn ảnh
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
     
@@ -25,11 +26,9 @@ export default function MenuView() {
 
     setUploading(true);
     try {
-      // Gọi API upload
       const res = await axios.post(getApiUrl('/upload'), formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      // Lưu đường dẫn ảnh vào state
       setNewItem({ ...newItem, imageUrl: res.data.imageUrl });
     } catch (err) {
       alert('Lỗi upload ảnh!');
@@ -64,7 +63,7 @@ export default function MenuView() {
         <div className="flex flex-col md:flex-row gap-6">
           {/* Khu vực Ảnh */}
           <div className="w-full md:w-1/4">
-            <label className="block w-full aspect-square rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-all relative overflow-hidden group">
+            <label className="w-full aspect-square rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-all relative overflow-hidden group">
               {newItem.imageUrl ? (
                 <img src={newItem.imageUrl} alt="Preview" className="w-full h-full object-cover" />
               ) : (
@@ -75,7 +74,6 @@ export default function MenuView() {
               )}
               <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
               
-              {/* Nút xóa ảnh */}
               {newItem.imageUrl && (
                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                   <span className="text-white text-xs font-bold">Đổi ảnh khác</span>
@@ -98,7 +96,12 @@ export default function MenuView() {
 
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Phân loại</label>
-              <select className="w-full p-3 border rounded-xl" value={newItem.type} onChange={e => setNewItem({...newItem, type: e.target.value})}>
+              <select 
+                aria-label="Phân loại món"
+                className="w-full p-3 border rounded-xl" 
+                value={newItem.type} 
+                onChange={e => setNewItem({...newItem, type: e.target.value})}
+              >
                 <option value="drink">Đồ uống</option>
                 <option value="food">Đồ ăn</option>
                 <option value="other">Dụng cụ / Khác</option>
@@ -119,7 +122,7 @@ export default function MenuView() {
         {menu.map((item) => (
           <div key={item.id} className="bg-white p-3 rounded-xl shadow-sm border border-gray-200 flex gap-4 items-center hover:shadow-md transition-all">
             {/* Ảnh món */}
-            <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-100">
+            <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-100">
               {item.imageUrl ? (
                 <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
               ) : (
@@ -129,7 +132,7 @@ export default function MenuView() {
               )}
             </div>
             
-            <div className="flex-grow">
+            <div className="grow">
               <div className="font-bold text-slate-800 line-clamp-1">{item.name}</div>
               <div className="text-blue-600 font-mono font-bold text-lg">{parseInt(item.price).toLocaleString()}</div>
               <div className="flex justify-between items-center mt-1">
